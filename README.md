@@ -1,116 +1,123 @@
 # 📝 Code-A-Nova Full Stack TODO Application
 
-A premium, fully featured, secure **MERN Stack (MongoDB, Express, React, Node.js)** TODO Application built as an internship assignment for Code-A-Nova. The application incorporates secure user authentication with OTP-based email verification, a personalized dashboard, complete task management (CRUD) capabilities, and a responsive modern user interface.
+A premium, fully featured, secure **MERN Stack (MongoDB, Express, React, Node.js)** TODO Application built as an internship project for Code-A-Nova. The application incorporates secure user authentication with OTP-based email verification, a personalized task dashboard, complete task management (CRUD) capabilities, native drag-and-drop reordering, background cron reminders, and a modern responsive user interface.
 
 ---
 
 ## 🚀 Live Demo & Repository
-- **Frontend URL:** *[Insert Live Frontend URL if deployed]*
-- **Backend URL:** *[Insert Live Backend URL if deployed]*
+- **Frontend URL:** 
+- **Backend URL:**
 - **GitHub Repository:** [https://github.com/Akhilkumar4464/TODO-CODE-A-NOVA.git](https://github.com/Akhilkumar4464/TODO-CODE-A-NOVA.git)
 
 ---
 
-## 🛠️ Recommended Tech Stack
+## 🛠️ Project Tech Stack
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Frontend** | React.js (Vite) | High-performance UI rendering & Client-side Routing |
-| **Backend** | Node.js + Express.js | REST API Server & Middleware controller |
-| **Database** | MongoDB + Mongoose | Data Persistence & Schemas |
-| **Auth** | JWT + bcrypt | Secure Sessions, Token-based Access Control & Password Hashing |
-| **Email** | Nodemailer | Secure OTP delivery for registration verification |
-| **Styling** | Tailwind CSS / Material UI (MUI) | Premium, responsive component design |
+| **Frontend** | React 19 (Vite) | High-performance UI rendering & routing |
+| **Backend** | Node.js + Express 5 | REST API Server & Middleware controller |
+| **Database** | MongoDB + Mongoose 9 | Data persistence, schemas, & validation |
+| **Auth** | JWT + bcryptjs | Secure token sessions & password hashing |
+| **Email** | Nodemailer | OTP delivery & contact/task notification emails |
+| **Cron Jobs** | node-cron | Scheduled hourly email reminder checks |
+| **Styling** | Tailwind CSS v4 | Modern, glassmorphism-based utility styles |
 
 ---
 
-## ✨ Features & Requirements
+## ✨ Features & Capabilities
 
-### 1. Authentication Flow
-- **Registration (Signup):** Users provide their Name, Email, and Password. Upon submission, a secure 6-digit OTP is generated on the backend and sent to their email using Nodemailer.
-- **OTP Verification:** Users enter the 6-digit OTP. On successful validation, their account status is marked as `isVerified: true`, and they are redirected to the Login page.
-- **Login:** Users authenticate with Email and Password. Upon successful verification, a JSON Web Token (JWT) is issued and stored securely (localStorage or HttpOnly cookie), redirecting them to the Dashboard.
-- **Protected Routes:** React Router guards prevent unauthenticated users from accessing the dashboard pages.
-- **Logout:** Clears the authentication token and returns the user to the landing page.
+### 1. Authentication & Security
+- **Signup (Registration):** Users register with their `UserName`, `gmail`, and `password`. Upon signup, a secure 6-digit OTP is generated and sent to their email.
+- **OTP Verification:** Verification screen validates the 6-digit OTP (expires in 10 minutes). Once verified, the user's `isVerified` status is set to `true`, allowing them to log in.
+- **Login:** Authenticates registered, verified users and issues a JWT token.
+- **Protected Routes:** Frontend route guard (`ProtectedRoute.jsx`) restricts access to `/dashboard` for unauthenticated sessions.
+- **Logout:** Discards the token from the client application.
 
 ### 2. Task Management (CRUD)
-- **Create:** Task creation form with validation (Title is required, description, due date, priority, and status).
-- **Read:** Display all tasks in a beautiful card or list layout with filter tabs (All, Pending, In-Progress, Completed).
-- **Update:** Inline editing or modal popup to modify task details, status, or priorities.
-- **Delete:** Soft or hard delete mechanism with user confirmation.
-- **Real-time Metrics:** Dashboard metrics summarizing Total, Completed, Pending, and In-Progress tasks.
+- **Create:** Add new tasks with `title`, optional `description`, optional `dueDate`, and `priority` level (`Low`, `Medium`, `High`).
+- **Read:** Display all user tasks, filterable by status (`All`, `Pending`, `In-Progress`, `Completed`), and sorted by priority, due date, or default position.
+- **Update:** Complete modal and quick-toggle updates for editing title, description, status, priority, and due dates.
+- **Delete:** Task removal with user confirmation prompts.
+- **Real-time Metrics:** High-level overview cards displaying counts of **Total**, **Pending**, **In-Progress**, and **Completed** tasks.
 
-### 3. User Profile
-- Displays the logged-in user's profile details: Name, Email, and Account creation date.
-- Initial-based custom avatar generator.
-
-### 4. Interactive Components
-- **Navbar:** Responsive header featuring branding logo, navigation links, and conditional login/signup/logout options.
-- **Footer:** Informational footer with contact information, links, and copyright.
-- **Contact Form:** Contact page with fields for Name, Email, and Message. Integrates with Nodemailer to trigger a confirmation response to the sender.
+### 3. Advanced Features
+- **Native HTML5 Drag-and-Drop:** Drag and reorder task cards directly in the UI. Features optimistic frontend updates for zero latency and persists changes using a backend bulk `Task.bulkWrite` endpoint.
+- **Cron-based Email Reminders:** A background cron job runs hourly to identify tasks due within the next 24 hours (excluding completed ones) and sends automated reminder emails to users.
+- **Contact Form Integration:** Users can submit inquiries via the `/contact` form page. The backend triggers a confirmation email response back to the sender.
+- **Premium Glassmorphic Design:** Stylized dark mode dashboard utilizing custom buttons, cards, avatars, dialog modals, loading spinners, and toast alerts.
 
 ---
 
 ## 📂 Project Architecture
 
-The application is structured into a clean monorepo format, separating concerns between client and server:
-
 ```text
-TODO-CODE-A-NOVA/
+TODO-CODE-A-NOVA-3/
 ├── backend/
-│   ├── config/             # DB Connection, Mailer Config
-│   ├── controllers/        # Auth and Task route controllers
-│   ├── middleware/         # JWT Verification, Request validation
-│   ├── models/             # Mongoose Schemas (User, Task)
-│   ├── routes/             # Express Router configurations
-│   ├── .env.example        # Reference environment variables
-│   ├── package.json        # Backend dependencies
-│   └── server.js           # Express App Entrypoint
+│   ├── config/             # DB Connection, Mailer SMTP configs
+│   ├── controllers/        # Route controllers (Task, Contact)
+│   ├── cron/               # Hourly task due date email reminder (reminderCron.js)
+│   ├── middlewares/        # JWT Authentication validator (auth.middleware.js)
+│   ├── models/             # Mongoose schemas (User.model.js, Task.model.js)
+│   ├── routes/             # Express API Routers (auth, task, contact)
+│   ├── utils/              # OTP, Token, and legacy Email utilities
+│   ├── .env                # Backend local environment configuration
+│   ├── package.json        # Node.js backend dependencies & scripts
+│   └── server.js           # Server application entry point
 │
 ├── frontend/
-│   ├── public/             # Static assets
+│   ├── public/             # Static page assets
 │   ├── src/
-│   │   ├── assets/         # Images, icons, global styles
-│   │   ├── components/     # Reusable UI components (Navbar, Footer, Modal, Button)
-│   │   ├── context/        # AuthContext and TaskContext for state management
-│   │   ├── pages/          # Home, Login, Signup, OTPVerify, Dashboard, Contact
-│   │   ├── services/       # API call handlers (Axios clients)
-│   │   ├── App.jsx         # App routes config
-│   │   └── main.jsx        # App entry point
-│   ├── .env.example        # Frontend environment variables
-│   ├── package.json        # Frontend dependencies
+│   │   ├── assets/         # CSS style sheets
+│   │   ├── components/     # Application view components
+│   │   │   ├── layout/     # PageShell, Navbar, Footer components
+│   │   │   ├── pages/      # Contact form component
+│   │   │   ├── ui/         # Buttons, Avatars, Modals, Cards, Inputs, Toasts
+│   │   │   ├── Dashboard.jsx # Main Dashboard view
+│   │   │   ├── Home.jsx    # Home / Landing page view
+│   │   │   ├── Login.jsx   # Login page component
+│   │   │   ├── Signup.jsx  # Sign-up page component
+│   │   │   ├── VerifyOtp.jsx # OTP verification step component
+│   │   │   └── ProtectedRoute.jsx # Router session guard
+│   │   ├── context/        # State management (AuthContext, TaskContext)
+│   │   ├── App.jsx         # App routing & context initialization
+│   │   ├── index.css       # Core Tailwind CSS directives
+│   │   └── main.jsx        # Frontend entry point
+│   ├── .env                # Frontend local API URL configurations
+│   ├── package.json        # Frontend scripts & package dependencies
 │   └── vite.config.js      # Vite build configurations
 │
-├── .env.example            # Root environment template
-└── README.md               # Documentation (This file)
+└── README.md               # Root Documentation (This file)
 ```
 
 ---
 
-## 🗄️ MongoDB Database Schemas
+## 🗄️ Database Schema Details
 
-### User Model
+### User Schema (`backend/models/User.model.js`)
 ```javascript
 {
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }, // Hashed using bcrypt
-  otp: { type: String, default: null },       // Temporary 6-digit code
-  otpExpires: { type: Date, default: null },  // OTP expiration time limit
+  UserName: { type: String, required: true, trim: true },
+  gmail: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  password: { type: String, required: true, trim: true, minlength: 6 },
+  otp: { type: String, default: null },
+  otpExpires: { type: Date, default: null },
   isVerified: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now }
 }
 ```
 
-### Task Model
+### Task Schema (`backend/models/Task.model.js`)
 ```javascript
 {
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  title: { type: String, required: true },
-  description: { type: String, default: '' },
+  title: { type: String, required: true, trim: true },
+  description: { type: String, trim: true, default: '' },
   dueDate: { type: Date, default: null },
   priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
   status: { type: String, enum: ['Pending', 'In-Progress', 'Completed'], default: 'Pending' },
+  position: { type: Number, default: 0 },
+  reminderSent: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 }
 ```
@@ -120,25 +127,29 @@ TODO-CODE-A-NOVA/
 ## 🔌 API Endpoint Reference
 
 ### Authentication Endpoints
-- **`POST /api/auth/register`** - Register a new user and dispatch OTP.
-- **`POST /api/auth/verify-otp`** - Verify registration OTP and activate account.
-- **`POST /api/auth/login`** - Authenticate credentials and return JWT.
-- **`GET /api/auth/me`** - Fetch authenticated user details *(Protected - Requires JWT)*.
+- **`POST /api/auth/register`** - Register a user and dispatch verification OTP.
+- **`POST /api/auth/verify-otp`** - Verify OTP token and activate account status.
+- **`POST /api/auth/login`** - Authenticate credentials and return JWT token.
+- **`POST /api/auth/logout`** - Logs out the user (frontend clears JWT).
+- **`GET /api/auth/profile`** - Get current logged-in user profile details *(Protected)*.
+- **`GET /api/auth/me`** - Fetch current user info verification *(Protected)*.
 
 ### Task Endpoints
-- **`GET /api/tasks`** - Fetch all tasks for the logged-in user *(Protected - Requires JWT)*.
-- **`POST /api/tasks`** - Create a new task *(Protected - Requires JWT)*.
-- **`PUT /api/tasks/:id`** - Update a specific task by ID *(Protected - Requires JWT)*.
-- **`DELETE /api/tasks/:id`** - Delete a specific task by ID *(Protected - Requires JWT)*.
+- **`GET /api/tasks`** - Fetch all tasks for the authenticated user, sorted by position *(Protected)*.
+- **`POST /api/tasks`** - Create a new task with automatic position calculation *(Protected)*.
+- **`PUT /api/tasks/reorder`** - Bulk updates task order sequence positions *(Protected)*.
+- **`PUT /api/tasks/:id`** - Update specific task details (resets reminder if due date changes) *(Protected)*.
+- **`DELETE /api/tasks/:id`** - Remove specific task *(Protected)*.
+
+### Contact Endpoints
+- **`POST /api/contact`** - Submits feedback messages and triggers customer confirmation mailings.
 
 ---
 
 ## ⚙️ Environment Variables Guide
 
-To run the application, configure separate environment variables for both the backend and frontend services. Refer to the `.env.example` file details below:
-
-### Backend Environments (`backend/.env`)
-Create a file named `.env` in the `backend/` folder:
+### Backend Variables (`backend/.env`)
+Create a `.env` file under the `/backend` folder:
 ```env
 PORT=5000
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/todoApp
@@ -147,10 +158,10 @@ EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-gmail-app-password
 FRONTEND_URL=http://localhost:5173
 ```
-> ⚠️ **Note:** For Gmail, you must generate an **App Password** from your Google Account Security Settings rather than using your main account password.
+> ⚠️ **Note:** To send emails via Gmail, make sure to generate an **App Password** from Google Account settings instead of using your primary password.
 
-### Frontend Environments (`frontend/.env`)
-Create a file named `.env` in the `frontend/` folder:
+### Frontend Variables (`frontend/.env`)
+Create a `.env` file under the `/frontend` folder:
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
@@ -160,9 +171,8 @@ VITE_API_URL=http://localhost:5000/api
 ## 🏁 Step-by-Step Installation & Setup
 
 ### Prerequisites
-Make sure you have the following installed on your machine:
-- [Node.js](https://nodejs.org/) (v16.x or higher)
-- [MongoDB](https://www.mongodb.com/) (Local server or MongoDB Atlas account)
+- [Node.js](https://nodejs.org/) (v18.x or higher recommended)
+- [MongoDB](https://www.mongodb.com/) (Local server or MongoDB Atlas cloud account)
 
 ---
 
@@ -174,13 +184,8 @@ cd TODO-CODE-A-NOVA
 
 ---
 
-### Step 2: Configure Environment Variables
-1. Copy the `.env.example` templates to active `.env` files.
-   ```bash
-   cp backend/.env.example backend/.env
-   cp frontend/.env.example frontend/.env
-   ```
-2. Open the `.env` files in your code editor and replace the placeholder values with your credentials.
+### Step 2: Configure Environments
+Create a `.env` file in the `backend/` and `frontend/` folders using the environment templates shown in the **Environment Variables Guide** section above.
 
 ---
 
@@ -189,20 +194,20 @@ cd TODO-CODE-A-NOVA
    ```bash
    cd backend
    ```
-2. Install node dependencies:
+2. Install backend dependencies:
    ```bash
    npm install
    ```
-3. Start the Express development server:
+3. Start the Express development server (using `nodemon`):
    ```bash
    npm run dev
    ```
-   *(Ensure it outputs: `Server is running on port 5000` & `Connected to MongoDB`)*
+   *(Verify it prints `Server is running on port 5000`, `Connected to MongoDB` and `[CRON] reminderCron scheduled.`)*
 
 ---
 
 ### Step 4: Run the Frontend App
-1. Open a new terminal window/tab and navigate to the `frontend` directory:
+1. Open a new terminal tab and navigate to the `frontend` directory:
    ```bash
    cd frontend
    ```
@@ -214,19 +219,6 @@ cd TODO-CODE-A-NOVA
    ```bash
    npm run dev
    ```
-4. Access the application in your browser at `http://localhost:5173`.
+4. Access the client app in your browser at `http://localhost:5173`.
 
 ---
-
-## ✨ Bonus Features Implemented
-- **Drag-and-Drop Task Reordering:** Dynamic visual prioritization via `@dnd-kit`.
-- **Search & Sort:** Quick search by title with sorting capability by due date and priority levels.
-- **Theme Support:** Dark / Light theme toggle built using Tailwind styling settings.
-- **Task reminders:** Automatic notification system using `node-cron`.
-
----
-
-## 📮 Submission Info
-- **Submitting to:** codenova31@gmail.com
-- **Subject line format:** `[INTERN ASSIGNMENT] Full Stack TODO App - <Your Name>`
-- **Content:** Public GitHub Repository URL, deployed URL link, and validation details.
