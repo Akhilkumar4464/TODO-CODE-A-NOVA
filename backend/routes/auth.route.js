@@ -137,6 +137,15 @@ router.get('/profile', authMiddleware, async (req, res) => {
   }
 })
 
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password -otp -otpExpires')
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+})
+
 
 export default router
 

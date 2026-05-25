@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth.route.js';
+import taskRoutes from './routes/task.route.js';
+import contactRoutes from './routes/contact.route.js';
 import { connectDB } from './config/db.js';
 import { createTransporter } from './config/mailer.js';
 import reminderCron from './cron/reminderCron.js';
@@ -23,6 +25,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Cron safely runs only if cron and models exist later.
 try {

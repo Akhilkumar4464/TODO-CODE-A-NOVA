@@ -3,12 +3,14 @@ import Button from './ui/Button'
 import Card from './ui/Card'
 import Container from './ui/Container'
 import Heading from './ui/Heading'
+import PageShell from './layout/PageShell'
 
 export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <Container className="py-14">
+    <PageShell>
+      <Container className="py-14">
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div className="relative">
           <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 backdrop-blur-xl">
@@ -105,6 +107,7 @@ export default function Home() {
         ))}
       </div>
     </Container>
+    </PageShell>
   )
 }
 

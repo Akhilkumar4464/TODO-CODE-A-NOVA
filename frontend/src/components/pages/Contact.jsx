@@ -4,6 +4,7 @@ import Container from '../ui/Container'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import Toast from '../ui/Toast'
+import PageShell from '../layout/PageShell'
 
 export default function Contact() {
   const [name, setName] = useState('')
@@ -48,7 +49,8 @@ export default function Contact() {
   }
 
   return (
-    <Container className="py-10">
+    <PageShell>
+      <Container className="py-10">
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div className="max-w-2xl">
           <h1 className="text-3xl font-extrabold tracking-tight text-white">Contact</h1>
@@ -114,7 +116,8 @@ export default function Contact() {
         type={toast?.type}
         onClose={() => setToast(null)}
       />
-    </Container>
+      </Container>
+    </PageShell>
   )
 }
 

@@ -64,6 +64,22 @@ export default function TaskProvider({ children }) {
     await fetchTasks()
   }
 
+  const reorderTasks = async (taskIds) => {
+    // Optimistic state update for instant, responsive dragging feedback
+    setTasks((prevTasks) => {
+      const taskMap = new Map(prevTasks.map((t) => [t._id, t]));
+      return taskIds.map((id) => taskMap.get(id)).filter(Boolean);
+    });
+
+    try {
+      await request('/tasks/reorder', { method: 'PUT', body: { taskIds } })
+    } catch (e) {
+      console.error('Failed to persist task order:', e.message)
+      // Rollback to original database state
+      await fetchTasks()
+    }
+  }
+
   const metrics = useMemo(() => {
     const map = {
       total: tasks.length,
@@ -89,6 +105,7 @@ export default function TaskProvider({ children }) {
       createTask,
       updateTask,
       deleteTask,
+      reorderTasks,
     }),
     [tasks, loading, error, metrics]
   )
