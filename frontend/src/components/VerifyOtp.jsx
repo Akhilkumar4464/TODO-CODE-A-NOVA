@@ -42,15 +42,16 @@ export default function VerifyOtp() {
       <p>Enter the 6-digit OTP sent to <b>{gmail}</b></p>
 
       <form onSubmit={handleVerify} style={{ display: 'grid', gap: 12 }}>
-        <input
-          inputMode="numeric"
-          pattern="\\d{6}"
-          maxLength={6}
-          placeholder="Enter 6-digit OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          required
-        />
+       <input
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]{6}"
+  maxLength={6}
+  placeholder="Enter 6-digit OTP"
+  value={otp}
+  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+  required
+/>
 
         <button type="submit" disabled={loading}>
           {loading ? 'Verifying...' : 'Verify OTP'}

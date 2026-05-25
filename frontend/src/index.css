@@ -1,1 +1,44 @@
 @import "tailwindcss";
+
+/* Tailwind v4 base is handled by @import.
+   Add small global polish for premium motion + smooth scrolling.
+*/
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+  overflow-x: hidden;
+  background: #06070c;
+}
+
+/* Light mode support (optional). */
+html.light body {
+  background: #f7f8ff;
+}
+
+/* Smooth page entrance */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 420ms ease-out both;
+}
+
