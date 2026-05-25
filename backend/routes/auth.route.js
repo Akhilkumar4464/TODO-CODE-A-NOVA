@@ -4,10 +4,11 @@ import bcrypt from 'bcryptjs'
 import authMiddleware from '../middlewares/auth.middleware.js'
 import { User } from '../models/User.model.js'
 import generateOTP from '../utils/generateOTP.js'
-import sendEmail from '../utils/sendEmail.js'
+import { sendOTPEmail } from '../config/mailer.js'
 import generateToken from '../utils/generateToken.js'
 
 const router = express.Router()
+
 
 // Register route
 router.post('/register', async (req, res) => {
@@ -36,9 +37,8 @@ router.post('/register', async (req, res) => {
 
     await user.save()
 
-    const subject = 'Your OTP for Code-A-Nova verification'
-    const text = `Your 6-digit OTP is: ${otp}. It expires in 10 minutes.`
-    await sendEmail(gmail, subject, text)
+    await sendOTPEmail(gmail, UserName, otp)
+
 
     return res
       .status(201)
@@ -139,6 +139,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
 
 
 export default router
+
 
 
  

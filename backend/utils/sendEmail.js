@@ -1,35 +1,10 @@
-import nodemailer from 'nodemailer';
+// Deprecated: kept for backward compatibility with existing auth route.
+// New implementation lives in backend/config/mailer.js with SMTP fallback.
+import { sendEmail } from '../config/mailer.js';
 
-const transporter = nodemailer.createTransport({
-
-   service: 'gmail',
-
-   auth: {
-
-      user: process.env.EMAIL_USER,
-
-      pass: process.env.EMAIL_PASS
-   }
-});
-
-
-const sendEmail = async (to, subject, text) => {
-
-   try {
-      await transporter.sendMail({
-
-         from: process.env.EMAIL_USER,
-
-         to,
-
-         subject,
-
-         text
-      });
-   } catch (error) {
-      console.error('Error sending email:', error);
-      throw error;
-   }
+const sendEmailLegacy = async (to, subject, text) => {
+  return sendEmail({ to, subject, text });
 };
 
-export default sendEmail;
+export default sendEmailLegacy;
+
