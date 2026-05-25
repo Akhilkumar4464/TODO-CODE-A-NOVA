@@ -3,7 +3,6 @@ import { User } from '../models/User.model.js';
 import bcrypt from 'bcryptjs';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import jwt from 'jsonwebtoken';
-import generateOTP from '../utils/generateOTP.js';
  const router = express.Router();
 
  // Register route
@@ -44,7 +43,7 @@ import generateOTP from '../utils/generateOTP.js';
 
                 // Generate JWT token
                 const token = jwt.sign({
-                    userId: user._id,
+                    id: user._id,
                     UserName: user.UserName,
                     gmail: user.gmail
                 }, process.env.JWT_SECRET, { expiresIn: '1h' });

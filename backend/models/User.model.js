@@ -12,7 +12,7 @@
               required:true,
               trim:true,
               unique:true,
-              tolowercase:true,
+              lowercase:true,
 
          }, 
          "password":{
